@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="description" content="Formulario de ingreso de ficha médica">
+    <meta name="keywords" content="ficha médica, formulario, registro, paciente">
+    <meta name="author" content="Jesús Caballero">
+    <title>Ficha Médica</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        label {
+            display: inline-block;
+            width: 150px;
+            margin-bottom: 10px;
+        }
+        input, select, textarea {
+            width: 200px;
+            margin-bottom: 10px;
+        }
+        button {
+            margin-right: 10px;
+        }
+        .alert {
+            background-color: #f44336;
+            color: white;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Agregar alerta indicando que no se almacena la data en una BD -->
+     <p class="alert"> 
+        <strong>Nota:</strong> La información ingresada en este formulario no se almacena en una base de datos. 
+        Al cerrar la ventana, se perderán los datos ingresados.
+     </p>
+
+    <h2>Formulario de Ingreso - Ficha Médica</h2>
+    <form id="medical-form">
+        <label for="rut">RUT:</label>
+        <input type="text" id="rut" name="rut" required><br>
+
+        <label for="nombres">Nombres:</label>
+        <input type="text" id="nombres" name="nombres" required><br>
+
+        <label for="apellidos">Apellidos:</label>
+        <input type="text" id="apellidos" name="apellidos" required><br>
+
+        <label for="direccion">Dirección:</label>
+        <input type="text" id="direccion" name="direccion" required><br>
+
+        <label for="ciudad">Ciudad:</label>
+        <input type="text" id="ciudad" name="ciudad" required><br>
+
+        <label for="telefono">Teléfono:</label>
+        <input type="tel" id="telefono" name="telefono" required><br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br>
+
+        <label for="fecha-nacimiento">Fecha de Nacimiento:</label>
+        <input type="date" id="fecha-nacimiento" name="fecha-nacimiento" required><br>
+
+        <label for="estado-civil">Estado Civil:</label>
+        <select id="estado-civil" name="estado-civil" required>
+            <option value="soltero">Soltero</option>
+            <option value="casado">Casado</option>
+            <option value="viudo">Viudo</option>
+            <option value="divorciado">Divorciado</option>
+        </select><br>
+
+        <label for="comentarios">Comentarios:</label>
+        <textarea id="comentarios" name="comentarios" rows="4"></textarea><br>
+
+        <button type="button" onclick="guardarRegistro()">Guardar</button>
+        <button type="button" onclick="limpiarFormulario()">Limpiar</button>
+        <button type="button" onclick="cerrarFormulario()">Cerrar</button>
+    </form>
+
+    <h3>Buscar Usuario por Apellido</h3>
+    <input type="text" id="buscar-apellido" placeholder="Ingresar Apellido">
+    <button type="button" onclick="buscarPorApellido()">Buscar</button>
+
+    <h3>Resultados de la Búsqueda</h3>
+    <div id="resultados-busqueda"></div>
+
+    <script>
+        const registros = [];
+
+        function guardarRegistro() {
+            const rut = document.getElementById('rut').value;
+            const nombres = document.getElementById('nombres').value;
+            const apellidos = document.getElementById('apellidos').value;
+            const direccion = document.getElementById('direccion').value;
+            const ciudad = document.getElementById('ciudad').value;
+            const telefono = document.getElementById('telefono').value;
+            const email = document.getElementById('email').value;
+            const fechaNacimiento = document.getElementById('fecha-nacimiento').value;
+            const estadoCivil = document.getElementById('estado-civil').value;
+            const comentarios = document.getElementById('comentarios').value;
+
+            const registroExistente = registros.find(registro => registro.rut === rut);
+            if (registroExistente) {
+                if (confirm("El registro ya existe. ¿Desea sobrescribirlo?")) {
+                    registroExistente.nombres = nombres;
+                    registroExistente.apellidos = apellidos;
+                    registroExistente.direccion = direccion;
+                    registroExistente.ciudad = ciudad;
+                    registroExistente.telefono = telefono;
+                    registroExistente.email = email;
+                    registroExistente.fechaNacimiento = fechaNacimiento;
+                    registroExistente.estadoCivil = estadoCivil;
+                    registroExistente.comentarios = comentarios;
+                    alert("Registro sobrescrito exitosamente.");
+                }
+            } else {
+                const nuevoRegistro = {
+                    rut, nombres, apellidos, direccion, ciudad, telefono, email, fechaNacimiento, estadoCivil, comentarios
+                };
+                registros.push(nuevoRegistro);
+                alert("Registro guardado exitosamente.");
+            }
+        }
+
+        function limpiarFormulario() {
+            document.getElementById('medical-form').reset();
+        }
+
+        function cerrarFormulario() {
+            window.close();
+        }
+
+        function buscarPorApellido() {
+            const apellidoBusqueda = document.getElementById('buscar-apellido').value.toLowerCase();
+            const resultados = registros.filter(registro => registro.apellidos.toLowerCase().includes(apellidoBusqueda));
+            
+            const resultadosDiv = document.getElementById('resultados-busqueda');
+            resultadosDiv.innerHTML = '';
+
+            if (resultados.length > 0) {
+                resultados.forEach(registro => {
+                    resultadosDiv.innerHTML += `<p><strong>${registro.apellidos}, ${registro.nombres}</strong><br>
+                    RUT: ${registro.rut}<br>
+                    Dirección: ${registro.direccion}, ${registro.ciudad}<br>
+                    Teléfono: ${registro.telefono}<br>
+                    Email: ${registro.email}<br>
+                    Fecha de Nacimiento: ${registro.fechaNacimiento}<br>
+                    Estado Civil: ${registro.estadoCivil}<br>
+                    Comentarios: ${registro.comentarios}</p><hr>`;
+                });
+            } else {
+                resultadosDiv.innerHTML = '<p>No se encontraron resultados.</p>';
+            }
+        }
+    </script>
+</body>
+</html>
