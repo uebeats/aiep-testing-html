@@ -36,7 +36,7 @@
     </style>
 </head>
 <body>
-    <!-- Agregar alerta indicando que no se almacena la data en una BD -->
+    <!-- Hola, este es el formulario de ingreso de ficha médica, para la actividad sumativa de la semana 3. El módulo es de testing y calidad de software. -->
      <p class="alert"> 
         <strong>Nota:</strong> La información ingresada en este formulario no se almacena en una base de datos. 
         Al cerrar la ventana, se perderán los datos ingresados.
@@ -105,6 +105,11 @@
             const fechaNacimiento = document.getElementById('fecha-nacimiento').value;
             const estadoCivil = document.getElementById('estado-civil').value;
             const comentarios = document.getElementById('comentarios').value;
+
+            if (!rut || !nombres || !apellidos || !direccion || !ciudad || !telefono || !email || !fechaNacimiento || !estadoCivil) {
+                alert("Todos los campos son obligatorios.");
+                return;
+            }
 
             const registroExistente = registros.find(registro => registro.rut === rut);
             if (registroExistente) {
